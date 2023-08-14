@@ -1,0 +1,8 @@
+add node any key, any properties hardcoded
+{
+    nodeKey: "su",
+    properties: {
+        name: "summu",
+        religion: "islam"
+    }
+}
