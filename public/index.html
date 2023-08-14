@@ -198,7 +198,50 @@
         console.error('Error deleting edge:', error);
       });
     }
-    
+
+
+    function getEdges() {
+      const sourceNodeKey = document.getElementById('source-node-key-get').value;
+      const targetNodeKey = document.getElementById('target-node-key-get').value;
+
+      const fileName = 'iqsu';
+
+      fetch(`https://graphbase.rontohub.com/v6/graph/${fileName}/getEdges/${sourceNodeKey}/${targetNodeKey}`)
+      .then(response => response.json())
+      .then(data => {
+        displayEdges(data);
+      })
+      .catch(error => {
+        console.error('Error fetching edges:', error);
+      });
+    }
+  
+    function getNode() {
+    const nodeKey = document.getElementById('get-node-key').value;
+
+    const fileName = 'iqsu';
+
+    fetch(`https://graphbase.rontohub.com/v6/graph/${fileName}/getNode/${nodeKey}`)
+    .then(response => response.json())
+    .then(data => {
+      displayNode(data);
+    })
+    .catch(error => {
+      console.error('Error fetching node:', error);
+    });
+  }
+
+  function displayNode(node) {
+    const nodeResult = document.getElementById('node-result');
+    nodeResult.innerHTML = '';
+    if (node) {
+      const nodeDetails = document.createElement('div');
+      nodeDetails.innerHTML = `<pre>${JSON.stringify(node, null, 2)}</pre>`;
+      nodeResult.appendChild(nodeDetails);
+    } else {
+      nodeResult.textContent = 'Node not found.';
+    }
+  }
   </script>
 </head>
 <body>
@@ -242,6 +285,23 @@
   <label for="delete-edge-key">Edge Key to Delete:</label>
   <input type="text" id="delete-edge-key">
   <button onclick="deleteEdge()">Delete Edge</button>
+
+  <hr/>
+  <h2>Get Node by Key</h2>
+  <label for="get-node-key">Node Key:</label>
+  <input type="text" id="get-node-key">
+  <button onclick="getNode()">Get Node</button>
+  <div id="node-result"></div>
+
+
+  <hr/>
+  <h2>Get Edges by Source and Target Node Keys</h2>
+  <label for="source-node-key-get">Source Node Key:</label>
+  <input type="text" id="source-node-key-get">
+  <label for="target-node-key-get">Target Node Key:</label>
+  <input type="text" id="target-node-key-get">
+  <button onclick="getEdges()">Get Edges</button>
+  <div id="edges-result"></div>
   
   <hr/>
 </body>
