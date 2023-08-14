@@ -8,17 +8,49 @@
     body {
       font-family: Arial, sans-serif;
       text-align: center;
-      margin-top: 100px;
+      margin-top: 50px;
+    }
+    #property-container {
+      margin-top: 20px;
+    }
+    .property-field {
+      margin-bottom: 10px;
     }
   </style>
   <script>
+    function addPropertyField() {
+      const container = document.getElementById('property-container');
+      const propertyField = document.createElement('div');
+      propertyField.className = 'property-field';
+      propertyField.innerHTML = `
+        <input type="text" placeholder="Property Name" class="property-name">
+        <input type="text" placeholder="Property Value" class="property-value">
+        <button onclick="deletePropertyField(this)">Delete</button>
+      `;
+      container.appendChild(propertyField);
+    }
+
+    function deletePropertyField(button) {
+      const container = document.getElementById('property-container');
+      container.removeChild(button.parentElement);
+    }
+
     function addNode() {
-      const data = {
-        nodeKey: "towheed",
-        properties: {
-          name: "Md Towheed",
-          religion: "islam"
+      const nodeKey = document.getElementById('node-key').value;
+
+      const properties = {};
+      const propertyFields = document.querySelectorAll('.property-field');
+      propertyFields.forEach(field => {
+        const propertyName = field.querySelector('.property-name').value;
+        const propertyValue = field.querySelector('.property-value').value;
+        if (propertyName && propertyValue) {
+          properties[propertyName] = propertyValue;
         }
+      });
+
+      const data = {
+        nodeKey: nodeKey,
+        properties: properties
       };
 
       fetch('https://graphbase.rontohub.com/v6/graph/iqsu/addNode', {
@@ -36,10 +68,123 @@
         console.error('Error adding node:', error);
       });
     }
+  
+    function viewGraphInJSON() {
+      fetch('https://graphbase.rontohub.com/v6/graph/iqsu/exportGraph')
+      .then(response => response.json())
+      .then(data => {
+        const jsonString = JSON.stringify(data, null, 2);
+        showResponseDialog(jsonString);
+      })
+      .catch(error => {
+        console.error('Error fetching graph:', error);
+      });
+    }
+
+    function showResponseDialog(jsonString) {
+      const dialog = document.createElement('div');
+      dialog.className = 'response-dialog';
+      dialog.innerHTML = `
+        <pre>${jsonString}</pre>
+      `;
+      document.body.appendChild(dialog);
+    }
+
+    function copyToClipboard(text) {
+      const textarea = document.createElement('textarea');
+      textarea.value = text;
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textarea);
+      alert('JSON response copied to clipboard!');
+    }
+
+    function addEdge() {
+      const edgeKey = document.getElementById('edge-key').value;
+      const sourceNodeKey = document.getElementById('source-node-key').value;
+      const targetNodeKey = document.getElementById('target-node-key').value;
+
+      const edgeProperties = {};
+      const propertyFields = document.querySelectorAll('.edge-property-field');
+      propertyFields.forEach(field => {
+        const propertyName = field.querySelector('.property-name').value;
+        const propertyValue = field.querySelector('.property-value').value;
+        if (propertyName && propertyValue) {
+          edgeProperties[propertyName] = propertyValue;
+        }
+      });
+
+      const data = {
+        edgeKey: edgeKey,
+        sourceNodeKey: sourceNodeKey,
+        targetNodeKey: targetNodeKey,
+        properties: edgeProperties
+      };
+
+      const fileName = 'iqsu';
+
+      fetch('https://graphbase.rontohub.com/v6/graph/' + fileName + '/addEdge', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      })
+      .then(response => response.json())
+      .then(result => {
+        console.log('Edge added:', result);
+        alert('Edge added successfully!');
+      })
+      .catch(error => {
+        console.error('Error adding edge:', error);
+      });
+    }
+
+    function addEdgePropertyField() {
+      const container = document.getElementById('edge-property-container');
+      const propertyField = document.createElement('div');
+      propertyField.className = 'edge-property-field';
+      propertyField.innerHTML = `
+        <input type="text" placeholder="Property Name" class="property-name">
+        <input type="text" placeholder="Property Value" class="property-value">
+        <button onclick="deleteEdgePropertyField(this)">Delete</button>
+      `;
+      container.appendChild(propertyField);
+    }
+
+    function deleteEdgePropertyField(button) {
+      const container = document.getElementById('edge-property-container');
+      container.removeChild(button.parentElement);
+    }
   </script>
 </head>
 <body>
   <h1>Welcome to wise.rontohub.com!</h1>
+  <hr/>
+  <button onclick="viewGraphInJSON()">View Graph in JSON</button>
+  <hr/>
+  <label for="node-key">Node Key:</label>
+  <input type="text" id="node-key">
+  <button onclick="addPropertyField()">Add Property Field</button>
+  <div id="property-container"></div>
   <button onclick="addNode()">Add Node</button>
+  <hr/>
+
+
+  <h2>Add Edge</h2>
+  <label for="edge-key">Edge Key:</label>
+  <input type="text" id="edge-key"><br>
+  <label for="source-node-key">Source Node Key:</label>
+  <input type="text" id="source-node-key"><br>
+  <label for="target-node-key">Target Node Key:</label>
+  <input type="text" id="target-node-key"><br>
+  
+  <div id="edge-property-container">
+    <!-- Edge property fields will be added dynamically here -->
+  </div>
+  <button onclick="addEdgePropertyField()">Add Edge Property Field</button>
+  <button onclick="addEdge()">Add Edge</button>
+
 </body>
 </html>
