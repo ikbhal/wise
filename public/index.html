@@ -18,6 +18,17 @@
     }
   </style>
   <script>
+     let fileName = 'iqsu'; // Default value, can be changed by the user
+
+function updateFileName() {
+    fileName = document.getElementById('file-name').value;
+  }
+
+  function formUrl(endpoint) {
+    return `https://graphbase.rontohub.com/v6/graph/${fileName}/${endpoint}`;
+  }
+
+
     function addPropertyField() {
       const container = document.getElementById('property-container');
       const propertyField = document.createElement('div');
@@ -53,7 +64,7 @@
         properties: properties
       };
 
-      fetch('https://graphbase.rontohub.com/v6/graph/iqsu/addNode', {
+      fetch(formUrl('addNode'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -70,7 +81,8 @@
     }
   
     function viewGraphInJSON() {
-      fetch('https://graphbase.rontohub.com/v6/graph/iqsu/exportGraph')
+      fetch(formUrl('exportGraph'))
+      // fetch('https://graphbase.rontohub.com/v6/graph/iqsu/exportGraph')
       .then(response => response.json())
       .then(data => {
         const jsonString = JSON.stringify(data, null, 2);
@@ -122,9 +134,7 @@
         properties: edgeProperties
       };
 
-      const fileName = 'iqsu';
-
-      fetch('https://graphbase.rontohub.com/v6/graph/' + fileName + '/addEdge', {
+      fetch(formUrl('addEdge'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -163,7 +173,7 @@
 
       const fileName = 'iqsu';
 
-      fetch(`https://graphbase.rontohub.com/v6/graph/${fileName}/deleteNode/${nodeKeyToDelete}`, {
+      fetch(formUrl(`deleteNode/${nodeKeyToDelete}`), {
         method: 'DELETE'
       })
       .then(response => response.json())
@@ -184,9 +194,7 @@
     function deleteEdge() {
       const edgeKeyToDelete = document.getElementById('delete-edge-key').value;
 
-      const fileName = 'iqsu';
-
-      fetch(`https://graphbase.rontohub.com/v6/graph/${fileName}/deleteEdge/${edgeKeyToDelete}`, {
+      fetch(formUrl(`deleteEdge/${edgeKeyToDelete}`), {
         method: 'DELETE'
       })
       .then(response => response.json())
@@ -204,9 +212,7 @@
       const sourceNodeKey = document.getElementById('source-node-key-get').value;
       const targetNodeKey = document.getElementById('target-node-key-get').value;
 
-      const fileName = 'iqsu';
-
-      fetch(`https://graphbase.rontohub.com/v6/graph/${fileName}/getEdges/${sourceNodeKey}/${targetNodeKey}`)
+      fetch(formUrl(`getEdges/${sourceNodeKey}/${targetNodeKey}`))
       .then(response => response.json())
       .then(data => {
         displayEdges(data);
@@ -219,9 +225,8 @@
     function getNode() {
     const nodeKey = document.getElementById('get-node-key').value;
 
-    const fileName = 'iqsu';
-
-    fetch(`https://graphbase.rontohub.com/v6/graph/${fileName}/getNode/${nodeKey}`)
+    // const fileName = 'iqsu';
+    fetch(formUrl(`getNode/${nodeKey}`))
     .then(response => response.json())
     .then(data => {
       displayNode(data);
@@ -247,6 +252,11 @@
 <body>
   <button onclick="goToHome()">Home</button>
   <h1>Welcome to wise.rontohub.com!</h1>
+  <hr/>
+
+  <input type="text" id="file-name" placeholder="Enter File Name" value="iqsu">
+  <button onclick="updateFileName()">Update File Name</button>
+
   <hr/>
   <button onclick="viewGraphInJSON()">View Graph in JSON</button>
   <hr/>
