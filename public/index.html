@@ -157,9 +157,52 @@
       const container = document.getElementById('edge-property-container');
       container.removeChild(button.parentElement);
     }
+
+    function deleteNode() {
+      const nodeKeyToDelete = document.getElementById('delete-node-key').value;
+
+      const fileName = 'iqsu';
+
+      fetch(`https://graphbase.rontohub.com/v6/graph/${fileName}/deleteNode/${nodeKeyToDelete}`, {
+        method: 'DELETE'
+      })
+      .then(response => response.json())
+      .then(result => {
+        console.log('Node deleted:', result);
+        alert('Node deleted successfully!');
+      })
+      .catch(error => {
+        console.error('Error deleting node:', error);
+      });
+    }
+
+    function goToHome() {
+      window.location.href = '/';
+    }
+
+
+    function deleteEdge() {
+      const edgeKeyToDelete = document.getElementById('delete-edge-key').value;
+
+      const fileName = 'iqsu';
+
+      fetch(`https://graphbase.rontohub.com/v6/graph/${fileName}/deleteEdge/${edgeKeyToDelete}`, {
+        method: 'DELETE'
+      })
+      .then(response => response.json())
+      .then(result => {
+        console.log('Edge deleted:', result);
+        alert('Edge deleted successfully!');
+      })
+      .catch(error => {
+        console.error('Error deleting edge:', error);
+      });
+    }
+    
   </script>
 </head>
 <body>
+  <button onclick="goToHome()">Home</button>
   <h1>Welcome to wise.rontohub.com!</h1>
   <hr/>
   <button onclick="viewGraphInJSON()">View Graph in JSON</button>
@@ -186,5 +229,20 @@
   <button onclick="addEdgePropertyField()">Add Edge Property Field</button>
   <button onclick="addEdge()">Add Edge</button>
 
+  <hr/>
+
+  <h2>Delete Node by Key</h2>
+  <label for="delete-node-key">Node Key to Delete:</label>
+  <input type="text" id="delete-node-key">
+  <button onclick="deleteNode()">Delete Node</button>
+
+  <hr/>
+
+  <h2>Delete Edge by Key</h2>
+  <label for="delete-edge-key">Edge Key to Delete:</label>
+  <input type="text" id="delete-edge-key">
+  <button onclick="deleteEdge()">Delete Edge</button>
+  
+  <hr/>
 </body>
 </html>
