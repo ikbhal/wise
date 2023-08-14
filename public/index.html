@@ -11,8 +11,35 @@
       margin-top: 100px;
     }
   </style>
+  <script>
+    function addNode() {
+      const data = {
+        nodeKey: "su",
+        properties: {
+          name: "summu",
+          religion: "islam"
+        }
+      };
+
+      fetch('https://graphbase.rontohub.com/v6/graph/iqsu/addNode', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      })
+      .then(response => response.json())
+      .then(result => {
+        console.log('Node added:', result);
+      })
+      .catch(error => {
+        console.error('Error adding node:', error);
+      });
+    }
+  </script>
 </head>
 <body>
   <h1>Welcome to wise.rontohub.com!</h1>
+  <button onclick="addNode()">Add Node</button>
 </body>
 </html>
