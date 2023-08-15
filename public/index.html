@@ -4,6 +4,18 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>wise.rontohub.com</title>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script>
+    $(document).ready(function() {
+      $('#file-name').keydown(function(event) {
+        if (event.keyCode === 13) { // Enter key code
+          event.preventDefault(); // Prevent default behavior of Enter key
+          updateFileName();
+        }
+      });
+    });
+  </script>
+      
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -86,20 +98,23 @@ function updateFileName() {
       .then(response => response.json())
       .then(data => {
         const jsonString = JSON.stringify(data, null, 2);
-        showResponseDialog(jsonString);
+        displayGraphJson(jsonString);
       })
       .catch(error => {
         console.error('Error fetching graph:', error);
       });
     }
 
-    function showResponseDialog(jsonString) {
-      const dialog = document.createElement('div');
+
+    function displayGraphJson(jsonString) {
+      const container = document.getElementById('view-graph-property-container');
+      container.innerHTML = ''; // Clear previous content
+
+      const dialog = document.createElement('pre');
       dialog.className = 'response-dialog';
-      dialog.innerHTML = `
-        <pre>${jsonString}</pre>
-      `;
-      document.body.appendChild(dialog);
+      dialog.textContent = jsonString;
+
+      container.appendChild(dialog);
     }
 
     function copyToClipboard(text) {
@@ -259,7 +274,10 @@ function updateFileName() {
 
   <hr/>
   <button onclick="viewGraphInJSON()">View Graph in JSON</button>
+  <div id="view-graph-property-container"></div>
   <hr/>
+
+  <h2>Add Node</h2>
   <label for="node-key">Node Key:</label>
   <input type="text" id="node-key">
   <button onclick="addPropertyField()">Add Property Field</button>
